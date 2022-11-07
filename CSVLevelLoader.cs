@@ -1,35 +1,33 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 using CSVLevelGen.Application;
+using CSVLevelGen.Data;
 
 namespace CSVLevelGen;
 
 public class CsvLevelLoader
 {
-    private DataDic _dataDic;
+    private Group _group;
     private StreamReader _stream;
     private char separator = '\t';
+    public string Path;
 
 
     public CsvLevelLoader(string path, char separator)
     {
-        path = Application.DataPath.ToString() + path;
-        if (!File.Exists(path))
+        Path = Application.DataPath.ToString() + path;
+        if (!File.Exists(Path))
         {
             Console.WriteLine("File not found");
             return;
         }
-
         this.separator = separator;
-
-        _dataDic = new DataDic();
-        _stream = new StreamReader(path);
-        ReadCSVSetCSV();
-        _stream.Close();
     }
 
-    private void ReadCSVSetCSV()
+    public Group ReadCSVSetCSV()
     {
+        _group = new Group();
+        _stream = new StreamReader(Path);
         while (!_stream.EndOfStream)
         {
             Line = _stream.ReadLine()?.Split(separator);
@@ -45,23 +43,25 @@ public class CsvLevelLoader
                 LoadAmountAndReward(3);
             }
         }
+        _stream.Close();
+        return _group;
     }
 
 
     private bool LoadAmountAndReward(int index)
     {
-        _dataDic.DataDictionary[currentType!][variant].LevelRequirements = new List<LevelRequirement>();
+        _group.AchievementGroup[currentType!][variant].LevelRequirements = new List<LevelRequirement>();
         for (int i = index; i < Line?.Length; i += 2)
         {
             if (Line[i] != "")
             {
                 LevelRequirement levelRequirement = new LevelRequirement(int.Parse(Line[i] ?? string.Empty),
                     int.Parse(Line[i + 1] ?? String.Empty));
-                _dataDic.DataDictionary[currentType][variant].LevelRequirements?.Add(levelRequirement);
+                _group.AchievementGroup[currentType][variant].LevelRequirements?.Add(levelRequirement);
             }
         }
 
-        return _dataDic.DataDictionary[currentType][variant].LevelRequirements?.Count > 0;
+        return _group.AchievementGroup[currentType][variant].LevelRequirements?.Count > 0;
     }
 
     private bool loadDescription(int index)
@@ -70,9 +70,9 @@ public class CsvLevelLoader
         string? words = Line?[index];
         if (currentType != null &&
             words is { Length: > 0 } &&
-            _dataDic.DataDictionary[currentType][variant].Title != "")
+            _group.AchievementGroup[currentType][variant].Title != "")
         {
-            _dataDic.DataDictionary[currentType][variant].Description = words;
+            _group.AchievementGroup[currentType][variant].Description = words;
             return LoadAmountAndReward(index + 1);
         }
 
@@ -80,16 +80,16 @@ public class CsvLevelLoader
     }
 
 
-    public string? currentType = "";
-    public string?[]? Line;
+    private string? currentType = "";
+    private string?[]? Line;
     private int variant = 0;
 
-    public bool LoadType(int index)
+    private bool LoadType(int index)
     {
         string? words = Line?[index];
         if (words is { Length: > 0 } && words[0] != '#')
         {
-            _dataDic.DataDictionary[words] = new List<Data>();
+            _group.AchievementGroup[words] = new List<Data.Data>();
             variant = -1;
             currentType = words;
             return true;
@@ -98,16 +98,16 @@ public class CsvLevelLoader
         return false;
     }
 
-    public bool loadTitle(int index)
+    private bool loadTitle(int index)
     {
         string? words = Line?[index];
         if (words is { Length: > 0 } && currentType.Length > 0)
         {
-            Data data = new Data
+            Data.Data data = new Data.Data
             {
                 Title = words
             };
-            _dataDic.DataDictionary[currentType].Add(data);
+            _group.AchievementGroup[currentType].Add(data);
             variant++;
             return true;
         }
