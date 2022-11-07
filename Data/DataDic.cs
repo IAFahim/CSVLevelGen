@@ -2,27 +2,34 @@
 
 namespace CSVLevelGen.Application;
 
-public class AchievementDataList
+public class DataDic
 {
-    public Dictionary<string, Data> Achievements;
+    public Dictionary<string, List<Data>> DataDictionary;
 
-    public AchievementDataList()
+    public DataDic()
     {
-        Achievements = new Dictionary<string, Data>();
+        DataDictionary = new Dictionary<string, List<Data>>();
     }
 }
 
 public class Data
 {
     public string Icon;
-    public string Title;
-    public string Description;
+    public string? Title;
+    public string? Description;
     public List<LevelRequirement>? LevelRequirements;
 }
 
 
-public abstract class LevelRequirement
+public  class LevelRequirement
 {
     public int Amount;
     public int Reward;
+    
+
+    public LevelRequirement(int amount, int reward)
+    {
+        Amount = amount;
+        Reward = reward;
+    }
 }

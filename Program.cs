@@ -1,3 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿namespace CSVLevelGen;
 
-Console.WriteLine("Hello, World!");
+static class Program
+{
+    static void Main(string[] args)
+    {
+        CsvLevelLoader loader = new CsvLevelLoader("Temple Of Mask Achievement System - Sheet1.tsv",'\t');
+    }
+}

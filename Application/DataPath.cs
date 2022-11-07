@@ -1,6 +1,10 @@
 ﻿namespace CSVLevelGen.Application;
 
-public class DataPath
+public static class DataPath
 {
-    
+
+    public static string ToString()
+    {
+        return @"C:\Users\Fahim\RiderProjects\CSVLevelGen\";
+    } 
 }
