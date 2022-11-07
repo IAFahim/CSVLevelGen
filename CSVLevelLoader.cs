@@ -36,7 +36,10 @@ public class CsvLevelLoader
             LoadType(0);
             if (!_stream.EndOfStream && Line[0] != "")
             {
-                if (!loadTitle(2)) continue;
+                while (!loadTitle(2))
+                {
+                    Line = _stream.ReadLine()?.Split(separator);
+                }
                 _stream.ReadLine();
                 if (!loadDescription(2)) continue;
                 LoadAmountAndReward(3);
