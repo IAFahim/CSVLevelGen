@@ -7,7 +7,7 @@ namespace CSVLevelGen;
 
 public class CsvLevelLoader
 {
-    private Group _group;
+    private AchievementGroup _group;
     private StreamReader _stream;
     private char separator = '\t';
     public string Path;
@@ -24,9 +24,9 @@ public class CsvLevelLoader
         this.separator = separator;
     }
 
-    public Group ReadCSVSetCSV()
+    public AchievementGroup ReadCSVSetCSV()
     {
-        _group = new Group();
+        _group = new AchievementGroup();
         _stream = new StreamReader(Path);
         while (!_stream.EndOfStream)
         {
@@ -50,18 +50,18 @@ public class CsvLevelLoader
 
     private bool LoadAmountAndReward(int index)
     {
-        _group.AchievementGroup[currentType!][variant].LevelRequirements = new List<LevelRequirement>();
+        _group.LevelGroup[currentType!][variant].LevelRequirements = new List<LevelRequirement>();
         for (int i = index; i < Line?.Length; i += 2)
         {
             if (Line[i] != "")
             {
                 LevelRequirement levelRequirement = new LevelRequirement(int.Parse(Line[i] ?? string.Empty),
                     int.Parse(Line[i + 1] ?? String.Empty));
-                _group.AchievementGroup[currentType][variant].LevelRequirements?.Add(levelRequirement);
+                _group.LevelGroup[currentType][variant].LevelRequirements?.Add(levelRequirement);
             }
         }
 
-        return _group.AchievementGroup[currentType][variant].LevelRequirements?.Count > 0;
+        return _group.LevelGroup[currentType][variant].LevelRequirements?.Count > 0;
     }
 
     private bool loadDescription(int index)
@@ -70,9 +70,9 @@ public class CsvLevelLoader
         string? words = Line?[index];
         if (currentType != null &&
             words is { Length: > 0 } &&
-            _group.AchievementGroup[currentType][variant].Title != "")
+            _group.LevelGroup[currentType][variant].Title != "")
         {
-            _group.AchievementGroup[currentType][variant].Description = words;
+            _group.LevelGroup[currentType][variant].Description = words;
             return LoadAmountAndReward(index + 1);
         }
 
@@ -89,7 +89,7 @@ public class CsvLevelLoader
         string? words = Line?[index];
         if (words is { Length: > 0 } && words[0] != '#')
         {
-            _group.AchievementGroup[words] = new List<Data.Data>();
+            _group.LevelGroup[words] = new List<Data.Data>();
             variant = -1;
             currentType = words;
             return true;
@@ -107,7 +107,7 @@ public class CsvLevelLoader
             {
                 Title = words
             };
-            _group.AchievementGroup[currentType].Add(data);
+            _group.LevelGroup[currentType].Add(data);
             variant++;
             return true;
         }

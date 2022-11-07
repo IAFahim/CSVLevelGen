@@ -1,12 +1,12 @@
 ﻿namespace CSVLevelGen.Data;
 
-public class Group
+public class AchievementGroup
 {
-    public readonly Dictionary<string, List<Data>> AchievementGroup;
+    public readonly Dictionary<string, List<Data>> LevelGroup;
 
-    public Group()
+    public AchievementGroup()
     {
-        AchievementGroup = new Dictionary<string, List<Data>>();
+        LevelGroup = new Dictionary<string, List<Data>>();
     }
 }
 
